@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wilt (demo state)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1 class="logo">Wilt</h1>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Turn</span><span class="stat-value"><span id="turn">1</span><span class="stat-sub">/40</span></span></div>
+        <div class="stat"><span class="stat-label">Score</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat"><span class="stat-label">Best</span><span class="stat-value" id="best">0</span></div>
+      </div>
+    </header>
+    <div id="board" class="board"></div>
+    <div class="message" id="message"></div>
+    <section class="controls">
+      <div class="hand" id="hand"></div>
+      <div class="actions">
+        <button id="harvestBtn" class="btn btn-harvest" disabled>Harvest</button>
+        <button id="passBtn" class="btn btn-pass">Pass</button>
+      </div>
+    </section>
+  </main>
+  <div class="overlay hidden" id="overlay">
+    <div class="overlay-card">
+      <h2 id="overlayTitle">Season over</h2>
+      <p class="final-score">Final score<br /><span id="finalScore">0</span></p>
+      <p id="overlayDetail" class="overlay-detail"></p>
+      <button id="restartBtn" class="btn btn-harvest">Play again</button>
+    </div>
+  </div>
+  <script src="game.js"></script>
+  <script>
+    // Build a representative mid-game state to eyeball every visual state.
+    state.turn = 17;
+    state.score = 124;
+    state.grid[idx(1,1)] = { kind: "plant", seed: "slow", ticksToBloom: 3, bloomLeft: 2 };
+    state.grid[idx(1,2)] = { kind: "plant", seed: "standard", ticksToBloom: 1, bloomLeft: 2 };
+    state.grid[idx(2,1)] = { kind: "plant", seed: "quick", ticksToBloom: 0, bloomLeft: 2 };   // blooming
+    state.grid[idx(2,2)] = { kind: "plant", seed: "slow", ticksToBloom: 0, bloomLeft: 2 };    // blooming
+    state.grid[idx(2,3)] = { kind: "plant", seed: "standard", ticksToBloom: 0, bloomLeft: 1 };// last-chance bloom
+    state.grid[idx(4,4)] = { kind: "husk" };
+    state.grid[idx(4,5)] = { kind: "husk" };
+    state.grid[idx(0,5)] = { kind: "plant", seed: "quick", ticksToBloom: 2, bloomLeft: 2 };
+    render();
+    setMessage("3 plants just bloomed! Harvest now or hold one more turn?");
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wilt</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1 class="logo">Wilt</h1>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Turn</span>
+          <span class="stat-value"><span id="turn">1</span><span class="stat-sub">/40</span></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Score</span>
+          <span class="stat-value" id="score">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Best</span>
+          <span class="stat-value" id="best">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="board" class="board" aria-label="game board"></div>
+
+    <div class="message" id="message">Select a seed, then tap an empty cell to plant it.</div>
+
+    <section class="controls">
+      <div class="hand" id="hand"></div>
+      <div class="actions">
+        <button id="harvestBtn" class="btn btn-harvest" disabled>Harvest</button>
+        <button id="passBtn" class="btn btn-pass">Pass</button>
+      </div>
+    </section>
+
+    <details class="rules">
+      <summary>How to play</summary>
+      <ul>
+        <li>Each turn, do <strong>one</strong> thing: <strong>plant</strong> a seed, <strong>harvest</strong>, or <strong>pass</strong>.</li>
+        <li>Every plant ages each turn. The number on a tile counts down to its <strong>bloom</strong>.</li>
+        <li>Blooms last only <strong>2 turns</strong> — miss the window and the plant wilts into a husk that blocks the cell.</li>
+        <li><strong>Harvest reaps every bloom on the board at once.</strong> Each connected group scores (sum of values) &times; (group size), so time your blooms to fire together, side by side.</li>
+        <li>Harvesting a group of 3+ also clears husks touching that group.</li>
+        <li>Seeds: <span class="pill quick">Quick 🌼 blooms in 2, worth 1</span> <span class="pill standard">Standard 🌸 blooms in 3, worth 3</span> <span class="pill slow">Slow 🪻 blooms in 5, worth 7</span></li>
+        <li>40 turns. Chase a high score.</li>
+      </ul>
+    </details>
+  </main>
+
+  <div class="overlay hidden" id="overlay">
+    <div class="overlay-card">
+      <h2 id="overlayTitle">Season over</h2>
+      <p class="final-score">Final score<br /><span id="finalScore">0</span></p>
+      <p id="overlayDetail" class="overlay-detail"></p>
+      <button id="restartBtn" class="btn btn-harvest">Play again</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

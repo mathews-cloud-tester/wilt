@@ -5,6 +5,7 @@ Tiny text utilities with zero dependencies.
 ## Features
 
 - slugify: turn arbitrary text into url-safe slugs
+- word_count: count the words in a string
 
 ## Usage
 

@@ -14,3 +14,10 @@ def slugify(text: str) -> str:
 def word_count(text: str) -> int:
     """Count whitespace-separated words."""
     return len(text.split())
+
+
+def truncate(text: str, limit: int) -> str:
+    """Truncate text to at most limit characters, ellipsis-terminated."""
+    if len(text) <= limit:
+        return text
+    return text[: limit - 1] + "\u2026"

@@ -2,10 +2,10 @@
 
 Tiny text utilities with zero dependencies.
 
-## Features
+## What's inside
 
-- slugify: turn arbitrary text into url-safe slugs
-- word_count: count the words in a string
+- slugify \u2014 URL-safe slugs from arbitrary text
+- word_count \u2014 count the words in a string
 
 ## Usage
 

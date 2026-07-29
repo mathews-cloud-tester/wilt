@@ -6,6 +6,7 @@ Tiny text utilities with zero dependencies.
 
 - slugify: turn arbitrary text into url-safe slugs
 - word_count: count the words in a string
+- truncate: shorten text to a character budget
 
 ## Usage
 

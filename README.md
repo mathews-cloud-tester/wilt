@@ -2,9 +2,9 @@
 
 Tiny text utilities with zero dependencies.
 
-## Features
+## What's inside
 
-- slugify: turn arbitrary text into url-safe slugs
+- slugify \u2014 URL-safe slugs from arbitrary text
 
 ## Usage
 

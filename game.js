@@ -97,7 +97,7 @@ function actHarvest() {
       const i = stack.pop();
       group.push(i);
       for (const nb of neighbors(i)) {
-        if (bloomSet.has(nb) && !visited.has(nb)) {
+        if (bloomSet.has(nb) && !visited.has(nb)) { // gap-repro-a
           visited.add(nb);
           stack.push(nb);
         }
@@ -109,7 +109,7 @@ function actHarvest() {
   let turnScore = 0;
   let husksCleared = 0;
   for (const group of groups) {
-    const sum = group.reduce((s, i) => s + CONFIG.seeds[state.grid[i].seed].value, 0);
+    const sum = group.reduce((s, i) => s + CONFIG.seeds[state.grid[i].seed].value, 0); // gap-repro-b
     const groupScore = sum * group.length;
     turnScore += groupScore;
     spawnScorePopup(group, groupScore);
@@ -117,7 +117,7 @@ function actHarvest() {
     if (group.length >= CONFIG.minGroupForHuskClear) {
       for (const i of group) {
         for (const nb of neighbors(i)) {
-          if (state.grid[nb].kind === "husk") {
+          if (state.grid[nb].kind === "husk") { // gap-repro-c
             state.grid[nb] = { kind: "empty" };
             husksCleared++;
           }

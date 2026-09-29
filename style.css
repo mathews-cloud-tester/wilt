@@ -95,6 +95,38 @@ body {
   box-shadow: inset 0 0 0 2px var(--accent-dark);
 }
 
+.plant-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+
+.cell.empty.plantable:hover .plant-preview,
+.cell.empty.plantable:focus-visible .plant-preview {
+  opacity: 0.72;
+}
+
+.cell.empty.plantable.preview-quick:hover {
+  box-shadow: inset 0 0 0 2px var(--quick);
+}
+.cell.empty.plantable.preview-standard:hover {
+  box-shadow: inset 0 0 0 2px var(--standard);
+}
+.cell.empty.plantable.preview-slow:hover {
+  box-shadow: inset 0 0 0 2px var(--slow);
+}
+
+@media (hover: none) {
+  .cell.empty.plantable .plant-preview {
+    opacity: 0.28;
+  }
+}
+
 .cell-emoji { font-size: clamp(20px, 6vw, 30px); line-height: 1; }
 .cell-emoji.seedling { opacity: 0.85; filter: saturate(0.7); }
 
@@ -109,6 +141,31 @@ body {
 
 .countdown { color: var(--muted); }
 
+.bloom-left {
+  top: 3px;
+  left: 5px;
+  right: auto;
+  bottom: auto;
+  color: var(--bloom);
+  font-size: 11px;
+  min-width: 1.1em;
+  text-align: center;
+  background: rgba(20, 24, 18, 0.45);
+  border-radius: 4px;
+  padding: 0 3px;
+  line-height: 1.35;
+}
+
+.last-chance .bloom-left {
+  color: var(--danger);
+  animation: blink 0.7s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
 .cell.blooming {
   background: #35401f;
   box-shadow: 0 0 12px rgba(255, 209, 102, 0.45), inset 0 0 0 2px var(--bloom);
@@ -118,6 +175,18 @@ body {
 .cell.blooming.last-chance {
   box-shadow: 0 0 12px rgba(224, 122, 95, 0.6), inset 0 0 0 2px var(--danger);
   animation: pulse 0.7s ease-in-out infinite;
+}
+
+.cell.blooming.harvesting {
+  animation: harvest-flash 0.42s ease-out forwards;
+  box-shadow: 0 0 18px rgba(255, 209, 102, 0.9), inset 0 0 0 3px #fff3bf;
+  z-index: 2;
+}
+
+@keyframes harvest-flash {
+  0% { transform: scale(1); filter: brightness(1); }
+  40% { transform: scale(1.08); filter: brightness(1.35); }
+  100% { transform: scale(1.02); filter: brightness(1.15); }
 }
 
 .bloom-tag { color: var(--bloom); }

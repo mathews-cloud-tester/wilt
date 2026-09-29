@@ -63,8 +63,10 @@ const isBlooming = (cell) => cell.kind === "plant" && cell.ticksToBloom === 0;
 const bloomingIndices = () => state.grid.map((c, i) => (isBlooming(c) ? i : -1)).filter((i) => i >= 0);
 
 // ---------- Actions (one per turn) ----------
+let actionLocked = false;
+
 function actPlant(cellIndex) {
-  if (state.over) return;
+  if (state.over || actionLocked) return;
   const cell = state.grid[cellIndex];
   if (cell.kind !== "empty" || state.selectedHandIndex === null) return;
   const seedKey = state.hand[state.selectedHandIndex];
@@ -80,7 +82,7 @@ function actPlant(cellIndex) {
 }
 
 function actHarvest() {
-  if (state.over) return;
+  if (state.over || actionLocked) return;
   const blooms = bloomingIndices();
   if (blooms.length === 0) return;
 
@@ -113,6 +115,7 @@ function actHarvest() {
     const groupScore = sum * group.length;
     turnScore += groupScore;
     spawnScorePopup(group, groupScore);
+    flashHarvestGroup(group);
     // Husk relief valve: groups of 3+ clear adjacent husks.
     if (group.length >= CONFIG.minGroupForHuskClear) {
       for (const i of group) {
@@ -124,18 +127,29 @@ function actHarvest() {
         }
       }
     }
-    for (const i of group) state.grid[i] = { kind: "empty" };
   }
 
   state.score += turnScore;
   const parts = [`Harvested ${blooms.length} bloom${blooms.length > 1 ? "s" : ""} for ${turnScore} points`];
   if (groups.length > 1) parts.push(`(${groups.length} separate groups)`);
   if (husksCleared > 0) parts.push(`— cleared ${husksCleared} husk${husksCleared > 1 ? "s" : ""}`);
-  endTurn(parts.join(" ") + ".");
+  const message = parts.join(" ") + ".";
+
+  // Hold the flash so connected groups read on the board, then clear blooms.
+  actionLocked = true;
+  document.getElementById("harvestBtn").disabled = true;
+  document.getElementById("passBtn").disabled = true;
+  setTimeout(() => {
+    for (const group of groups) {
+      for (const i of group) state.grid[i] = { kind: "empty" };
+    }
+    actionLocked = false;
+    endTurn(message);
+  }, 420);
 }
 
 function actPass() {
-  if (state.over) return;
+  if (state.over || actionLocked) return;
   endTurn("Passed. The garden grows without you.");
 }
 
@@ -204,7 +218,14 @@ function render() {
     el.dataset.index = i;
     if (cell.kind === "empty") {
       el.classList.add("empty");
-      if (!state.over && state.selectedHandIndex !== null) el.classList.add("plantable");
+      if (!state.over && state.selectedHandIndex !== null) {
+        el.classList.add("plantable");
+        const seedKey = state.hand[state.selectedHandIndex];
+        const seed = CONFIG.seeds[seedKey];
+        el.classList.add(`preview-${seedKey}`);
+        el.innerHTML = `<span class="plant-preview" aria-hidden="true"><span class="cell-emoji">${seed.emoji}</span><span class="cell-tag countdown">${seed.growTime}</span></span>`;
+        el.title = `Plant ${seed.name} (blooms in ${seed.growTime})`;
+      }
     } else if (cell.kind === "husk") {
       el.classList.add("husk");
       el.innerHTML = `<span class="cell-emoji">\u{1F342}</span>`;
@@ -215,7 +236,7 @@ function render() {
       if (isBlooming(cell)) {
         el.classList.add("blooming");
         if (cell.bloomLeft === 1) el.classList.add("last-chance");
-        el.innerHTML = `<span class="cell-emoji">${seed.emoji}</span><span class="cell-tag bloom-tag">+${seed.value}</span>`;
+        el.innerHTML = `<span class="cell-emoji">${seed.emoji}</span><span class="cell-tag bloom-left" title="Turns before wilt">${cell.bloomLeft}</span><span class="cell-tag bloom-tag">+${seed.value}</span>`;
         el.title = `Blooming! Worth ${seed.value}. ${cell.bloomLeft} turn${cell.bloomLeft > 1 ? "s" : ""} before it wilts.`;
       } else {
         el.innerHTML = `<span class="cell-emoji seedling">\u{1F331}</span><span class="cell-tag countdown">${cell.ticksToBloom}</span>`;
@@ -272,6 +293,13 @@ function spawnScorePopup(group, score) {
   setTimeout(() => pop.remove(), 1100);
 }
 
+function flashHarvestGroup(group) {
+  for (const i of group) {
+    const cellEl = boardEl.querySelector(`[data-index="${i}"]`);
+    if (cellEl) cellEl.classList.add("harvesting");
+  }
+}
+
 // ---------- Wire up ----------
 document.getElementById("harvestBtn").addEventListener("click", actHarvest);
 document.getElementById("passBtn").addEventListener("click", actPass);
@@ -281,7 +309,7 @@ document.getElementById("restartBtn").addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (state.over) return;
+  if (state.over || actionLocked) return;
   if (e.key === "h" || e.key === "H") actHarvest();
   if (e.key === "p" || e.key === "P" || e.key === " ") actPass();
   if (e.key === "1" || e.key === "2" || e.key === "3") {
